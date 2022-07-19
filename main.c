@@ -94,12 +94,61 @@ int second_chance(int8_t** page_table, int num_pages, int prev_page,
 
 int nru(int8_t** page_table, int num_pages, int prev_page,
         int fifo_frm, int num_frames, int clock) {
-    return -1;
+
+    int page = 0;
+    // percorre todas as paginas
+    while(page != num_pages){
+        // verifica se a pagina foi referenciada e modificada
+        // Posteriormente armazena em uma lista 
+        // A pagina é selecionada aleatoriamente a partir da lista
+        int ref = page_table[page][PT_REFERENCE_BIT];
+        int mod = page_table[page][PT_DIRTY];
+        int map = page_table[page][PT_MAPPED];
+
+        //As substituições das páginas seguem a seguinte prioridade:
+        //páginas não referenciadas e não modificadas,
+        //páginas não referenciadas, páginas não modificadas 
+        //páginas referenciadas e modificadas.
+
+        if ((ref == 0) && (mod == 0) && (map != 0)){
+            return page;
+        }else if ((ref == 0) && (mod == 1) && (map != 0)){
+            return page;
+        }else if ((ref == 1) && (mod == 0) && (map != 0)){
+            return page;
+        }else if ((ref == 1) && (mod == 1) && (map != 0)){
+            return page;
+        }
+        page++;
+    }
+    return page;
 }
 
 int aging(int8_t** page_table, int num_pages, int prev_page,
           int fifo_frm, int num_frames, int clock) {
-    return -1;
+
+    int posicao1 = 0;
+    int menor = 0;
+    int idx = 0;
+
+
+    while(idx != num_pages){
+        // verifica se a pagina esta mapeada
+        if(page_table[idx][PT_MAPPED] == 0){
+            idx++; 
+        }else{
+            posicao1++;
+            // Se o enderço for valido, será selecionada a pprimeira posição
+            if(posicao1 == 1){            
+                menor = idx;
+            }
+            if(page_table[menor][PT_AGING_COUNTER] > page_table[idx+1][PT_AGING_COUNTER]){
+                menor=idx;
+            }
+            idx++;
+        }
+    }
+    return menor;
 }
 
 int mfu(int8_t** page_table, int num_pages, int prev_page,
