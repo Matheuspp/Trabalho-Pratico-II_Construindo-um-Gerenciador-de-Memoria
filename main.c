@@ -44,12 +44,52 @@ typedef struct {
 
 int fifo(int8_t** page_table, int num_pages, int prev_page,
          int fifo_frm, int num_frames, int clock) {
-    return -1;
+    int page = 0;
+    // percorre todas as paginas
+    for(int i = 0;i < num_pages;i++){
+        // se fifo_frm == PT_FRAMEID, encontramos a primeira página.
+        if (page_table[page][PT_FRAMEID] == fifo_frm){
+            break;
+        }
+        page++;
+    }
+    return page;
 }
 
 int second_chance(int8_t** page_table, int num_pages, int prev_page,
                   int fifo_frm, int num_frames, int clock) {
-    return -1;
+    int page = 0;
+    int bit_r = -1;
+    // percorre todas as paginas
+    for(int i = 0;i < num_pages;i++){
+        // se fifo_frm == PT_FRAMEID, encontramos a primeira página.
+        if (page_table[page][PT_FRAMEID] == fifo_frm){
+            
+            bit_r = page_table[page][PT_REFERENCE_BIT];
+
+            // Se o bit R for 1, ele será setado para o valor 0.
+            // Em seguida, a página referenciada vai para o final da fila.
+            if (bit_r == 1){
+                page_table[page][PT_REFERENCE_BIT] = 0;
+                
+                // proximo mais antigo
+                if (fifo_frm == 2){ // limite de frames
+                    fifo_frm = 0;
+                    page_table[page][PT_FRAMEID] = fifo_frm + 1;
+                }else if(fifo_frm == 1){
+                    fifo_frm = 2;
+                    page_table[page][PT_FRAMEID] = 0;
+                }else{
+                    fifo_frm = 1;
+                    page_table[page][PT_FRAMEID] = fifo_frm + 1;
+                }
+                
+            }
+            break;
+        }
+        page++;
+    }
+    return page;
 }
 
 int nru(int8_t** page_table, int num_pages, int prev_page,
