@@ -3,15 +3,15 @@ Neste projeto o aluno deverá implementar em linguagem C algum algoritmo de subi
 
 ### Execução
 Para executar o código, basta usar o comando do makefile:
-'''
+```
 make run ALGORITHM=fifo NUM_PAGES=10
-'''
+```
 O paramêtro ALGORITHM poderá ser escolhindo dentre as seguintes opções:</br>
 fifo, random, aging e nru. Já o NUM_PAGES representa o número de páginas virtuais.</br>
 
 Alternativamente o código poderá ser compilado diretamente polo gcc:
 
-'''
+```
 gcc -Wall vmm.c -o vmm
 ./vmm random 10 < anomaly.dat
-'''
+```
